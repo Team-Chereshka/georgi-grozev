@@ -1,7 +1,5 @@
 package fields;
 
-import engine.Fight;
-import interfaces.Vegetable;
 import units.Ninja;
 import vegetables.*;
 
@@ -83,80 +81,12 @@ public class Field {
         }
     }
 
-    public boolean movement(char currentMovement, Ninja ninjaToMove, Ninja passiveNinja) {
-        int currentRow = ninjaToMove.getRow();
-        int currentCol = ninjaToMove.getCol();
-        boolean checkForWinner = false;
-
-        switch (currentMovement) {
-            case 'U':
-                checkForWinner = moveNinja(ninjaToMove, passiveNinja, currentRow - 1, currentCol);
-                break;
-            case 'D':
-                checkForWinner = moveNinja(ninjaToMove, passiveNinja, currentRow + 1, currentCol);
-                break;
-            case 'L':
-                checkForWinner = moveNinja(ninjaToMove, passiveNinja, currentRow, currentCol - 1);
-                break;
-            case 'R':
-                checkForWinner = moveNinja(ninjaToMove, passiveNinja, currentRow, currentCol + 1);
-                break;
-            default:
-                break;
-        }
-
-
-        fieldRefresh(ninjaToMove, passiveNinja);
-        fieldRegrowth();
-
-        return checkForWinner;
-    }
-
-    private boolean moveNinja(Ninja ninjaToMove, Ninja passiveNinja, int newRow, int newCol) {
-        boolean winnerFound = false;
-        if (!isOutOfBounds(this.fieldOfObjects, newRow, newCol)) {
-            boolean ninjaFound = checkForNinjas(this.fieldOfObjects, newRow, newCol, ninjaToMove, passiveNinja);
-            boolean vegetableFound = checkForVegetables(this.fieldOfObjects, newRow, newCol);
-
-            if (ninjaFound) {
-                initiateFight(ninjaToMove, passiveNinja);
-                winnerFound = true;
-            } else if (vegetableFound) {
-                BaseVegetable vegetable = (BaseVegetable) fieldOfObjects[newRow][newCol];
-                boolean isPickedUp = vegetable.getPickedUp(turnCounter);
-
-                if (isPickedUp) {
-                    ninjaToMove.getListOfCollectedVegetables().add(vegetable);
-                    vegetable.setSteppedOn(true);
-                    ninjaToMove.setRow(newRow);
-                    ninjaToMove.setCol(newCol);
-                    ninjaToMove.setStamina(ninjaToMove.getStamina() - 1);
-                }
-            } else if (ninjaToMove.getInitialRow() == newRow && ninjaToMove.getInitialCol() == newCol) {
-                ninjaToMove.setRow(newRow);
-                ninjaToMove.setCol(newCol);
-                ninjaToMove.setStamina(ninjaToMove.getStamina() - 1);
-            }
-
-        } else {
-            ninjaToMove.setStamina(ninjaToMove.getStamina() - 1);
-        }
-        return winnerFound;
-    }
-
-    private void initiateFight(Ninja firstNinja, Ninja secondNinja) {
-        Fight fight = new Fight(firstNinja, secondNinja);
-        Ninja winner = fight.battle();
-
-        System.out.println(winner);
-
-    }
-
-    private void fieldRefresh(Ninja ninjaToMove, Ninja passiveNinja) {
+    public void fieldRefresh(Ninja ninjaToMove, Ninja passiveNinja) {
         int ninjaCol = ninjaToMove.getCol();
         int ninjaRow = ninjaToMove.getRow();
         int passiveNinjaCol = passiveNinja.getCol();
         int passiveNinjaRow = passiveNinja.getRow();
+
         for (BaseVegetable vegetable : listOfVegetablesOnField) {
 
             int vegetableCol = vegetable.getCol();
@@ -170,42 +100,11 @@ public class Field {
         }
     }
 
-    private void fieldRegrowth() {
+    public void fieldRegrowth() {
 
         for (BaseVegetable vegetable : listOfVegetablesOnField) {
             vegetable.regrow(this.turnCounter);
         }
-    }
-
-    private boolean checkForVegetables(Object[][] fieldOfObjects, int row, int col) {
-        boolean vegetableFound = false;
-        if (fieldOfObjects[row][col] instanceof Vegetable) {
-            vegetableFound = true;
-        }
-
-        if (fieldOfObjects[row][col] instanceof Blank) {
-            vegetableFound = false;
-        }
-
-        return vegetableFound;
-    }
-
-    private boolean checkForNinjas(Object[][] fieldOfObjects, int row, int col, Ninja ninjaToMove, Ninja passiveNinja) {
-        boolean ninjaFound = false;
-
-        if ((row == passiveNinja.getRow() && col == passiveNinja.getCol())) {
-            ninjaFound = true;
-        }
-        return ninjaFound;
-    }
-
-    private boolean isOutOfBounds(Object[][] field, int row, int col) {
-        boolean result = false;
-
-        if (row < 0 || col < 0 || row > field.length - 1 || col > field.length - 1) {
-            result = true;
-        }
-        return result;
     }
 
     public void setTurnCounter(int turnCounter) {
@@ -214,5 +113,9 @@ public class Field {
 
     public int getTurnCounter() {
         return turnCounter;
+    }
+
+    public Object[][] getFieldOfObjects() {
+        return fieldOfObjects;
     }
 }

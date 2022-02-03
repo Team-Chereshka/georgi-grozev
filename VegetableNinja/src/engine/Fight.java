@@ -4,27 +4,25 @@ import units.Ninja;
 
 public class Fight {
 
-   private Ninja ninja1;
-   private Ninja ninja2;
-
-    public Fight(Ninja ninja1, Ninja ninja2) {
-        this.ninja1 = ninja1;
-        this.ninja2 = ninja2;
+    public static void initiateFight(Ninja firstNinja, Ninja secondNinja) {
+        Ninja winner = battle(firstNinja, secondNinja);
+        firstNinja.setStamina(firstNinja.getStamina() - 1);
+        System.out.println(winner);
     }
 
-
-    public Ninja battle() {
-        int ninja1Power = this.ninja1.getPower();
-        int ninja2Power = this.ninja2.getPower();
+    private static Ninja battle(Ninja firstNinja, Ninja secondNinja) {
+        int ninja1Power = firstNinja.getPower();
+        int ninja2Power = secondNinja.getPower();
 
         Ninja winner;
 
         if (ninja1Power >= ninja2Power) {
-            winner = ninja1;
+            winner = firstNinja;
         } else {
-            winner = ninja2;
+            winner = secondNinja;
         }
 
         return winner;
     }
+
 }

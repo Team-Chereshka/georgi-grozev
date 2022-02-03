@@ -30,53 +30,51 @@ public class Main {
 
         Field field = new Field(fieldMatrix);
         field.convertToObjects(fieldMatrix, firstNinja, secondNinja);
+        MovementController movementController = new MovementController(field);
 
         boolean winnerFound = false;
 
         char[] movementCommand = scanner.nextLine().toCharArray();
 
-        String lastMoved = "";
+        String whoIsNextToMove = "first";
 
         while (true) {
-            for (int i = 0; i < movementCommand.length; i++) {
-                char currentMovement = movementCommand[i];
-
-
-                if (firstNinja.getStamina() == 0) {
-                    boolean meloLemonMelonFoundByFirst = firstNinja.eat();
-                    if (meloLemonMelonFoundByFirst) {
-                        for (int j = 0; j < 5; j++) {
-                            Mushroom mushroom = new Mushroom(0, 0);
-                            secondNinja.collect(mushroom);
-                        }
+            for (char currentMovement : movementCommand) {
+                if (whoIsNextToMove.equals("first")) {
+                    if (firstNinja.getStamina() >= 0) {
+                        winnerFound = movementController.giveDirection(currentMovement, firstNinja, secondNinja);
                     }
-                }
-                winnerFound = field.movement(currentMovement, firstNinja, secondNinja);
 
-
-                if (winnerFound) {
-                    break;
-                }
-
-
-                if (secondNinja.getStamina() == 0) {
-                    boolean meloLemonMelonFoundBySecond = secondNinja.eat();
-                    if (meloLemonMelonFoundBySecond) {
-                        for (int j = 0; j < 5; j++) {
-                            Mushroom mushroom = new Mushroom(0, 0);
-                            firstNinja.collect(mushroom);
-                        }
+                    if (winnerFound) {
+                        break;
                     }
+
+                    if (firstNinja.getStamina() == 0) {
+                        boolean meloLemonMelonFoundByFirst = firstNinja.eat();
+                        if (meloLemonMelonFoundByFirst) {
+                            secondNinja.punishment();
+                        }
+                        whoIsNextToMove = "second";
+                    }
+                    field.setTurnCounter(field.getTurnCounter() + 1);
+                } else {
+                    if (secondNinja.getStamina() >= 0) {
+                        winnerFound = movementController.giveDirection(currentMovement, secondNinja, firstNinja);
+                    }
+
+                    if (winnerFound) {
+                        break;
+                    }
+
+                    if (secondNinja.getStamina() == 0) {
+                        boolean meloLemonMelonFoundBySecond = secondNinja.eat();
+                        if (meloLemonMelonFoundBySecond) {
+                            firstNinja.punishment();
+                        }
+                        whoIsNextToMove = "first";
+                    }
+                    field.setTurnCounter(field.getTurnCounter() + 1);
                 }
-                winnerFound = field.movement(currentMovement, secondNinja, firstNinja);
-
-
-                if (winnerFound) {
-                    break;
-                }
-
-
-                field.setTurnCounter(field.getTurnCounter() + 1);
             }
             if (winnerFound) {
                 break;

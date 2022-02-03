@@ -1,6 +1,7 @@
 package units;
 
 import interfaces.Vegetable;
+import vegetables.Mushroom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +26,6 @@ public class Ninja {
         this.listOfCollectedVegetables = new ArrayList<>();
     }
 
-    public void reduceStamina() {
-        this.stamina -= 1;
-    }
 
     public void collect(Vegetable vegetable) {
         this.listOfCollectedVegetables.add(vegetable);
@@ -105,6 +103,27 @@ public class Ninja {
 
     public int getInitialCol() {
         return initialCol;
+    }
+
+    public void pickUpVegetable(Vegetable vegetable, int newRow, int newCol) {
+        this.getListOfCollectedVegetables().add(vegetable);
+        this.setRow(newRow);
+        this.setCol(newCol);
+        this.setStamina(this.getStamina() - 1);
+    }
+
+    public void returnToInitialPosition(int newRow, int newCol) {
+        this.setRow(newRow);
+        this.setCol(newCol);
+        this.setStamina(this.getStamina() - 1);
+    }
+
+    public void punishment() {
+        for (int j = 0; j < 5; j++) {
+            Mushroom mushroom = new Mushroom(0, 0);
+            this.collect(mushroom);
+        }
+
     }
 
     @Override

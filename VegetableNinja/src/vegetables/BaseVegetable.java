@@ -10,7 +10,6 @@ public abstract class BaseVegetable implements Vegetable {
     private int row;
     private int column;
     private int eatenAtTurn;
-    private int currentTurn;
     boolean isPickedUp;
     boolean steppedOn;
 
@@ -26,12 +25,12 @@ public abstract class BaseVegetable implements Vegetable {
     }
 
     public boolean getPickedUp(int turnCounter) {
+        // Checks if the Vegetable is currently picked up (and in the process of regrowing), if not - it gets picked up.
         if (eatenAtTurn == 0) {
             this.eatenAtTurn = turnCounter;
             this.isPickedUp = true;
         }
         return this.isPickedUp;
-
     }
 
     public void regrow(int turnCounter) {
@@ -42,8 +41,8 @@ public abstract class BaseVegetable implements Vegetable {
 
         if (turnCounter - this.eatenAtTurn >= movesToRegrow) {
             this.eatenAtTurn = 0;
+            this.isPickedUp = false;
         }
-        this.currentTurn = turnCounter;
     }
 
     public void setSteppedOn(boolean steppedOn) {
